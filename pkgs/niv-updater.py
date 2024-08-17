@@ -122,7 +122,7 @@ def main():
 
     parser = ArgumentParser(description="Update niv sources and commit changes with a changelog")
 
-    parser.add_argument('PACKAGE', type=str, help='The repo to update', nargs='?')
+    parser.add_argument('PACKAGE', type=str, help='The repo to update, if none is provided it will update all', nargs='?')
 
     parser.add_argument("--no-changelog", action="store_false",
                         help="do not create a changelog")
