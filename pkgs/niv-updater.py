@@ -129,7 +129,7 @@ def main():
 
     parser.add_argument("-c", "--config", dest="config",
                         help="provide a config file",
-                        metavar="CONFIG", default="update_niv.toml")
+                        metavar="CONFIG", default="niv-updater.toml")
 
 
     args = parser.parse_args()
