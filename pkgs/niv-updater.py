@@ -131,7 +131,7 @@ def main():
                         help="do not create a changelog")
 
     parser.add_argument("-c", "--config", dest="config",
-                        help="provide a config file",
+                        help="provide a config file, default is ~/.config/niv-updater/config.toml",
                         metavar="CONFIG", default="~/.config/niv-updater/config.toml")
 
 

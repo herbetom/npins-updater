@@ -36,11 +36,11 @@ usage: niv-updater [-h] [--no-changelog] [-c CONFIG] [PACKAGE]
 Update niv sources and commit changes with a changelog
 
 positional arguments:
-  PACKAGE               The repo to update
+  PACKAGE               The repo to update, if none is provided it will update all
 
 options:
   -h, --help            show this help message and exit
   --no-changelog        do not create a changelog
   -c CONFIG, --config CONFIG
-                        provide a config file
+                        provide a config file, default is ~/.config/niv-updater/config.toml
 ```
