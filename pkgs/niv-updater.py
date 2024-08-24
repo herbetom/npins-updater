@@ -13,6 +13,9 @@ from argparse import ArgumentParser
 
 
 def load_config(file_path):
+
+    file_path = os.path.expanduser(file_path)
+
     try:
         with open(f"{file_path}", "rb") as f:
             config = tomllib.load(f)
@@ -129,7 +132,7 @@ def main():
 
     parser.add_argument("-c", "--config", dest="config",
                         help="provide a config file",
-                        metavar="CONFIG", default="niv-updater.toml")
+                        metavar="CONFIG", default="~/.config/niv-updater/config.toml")
 
 
     args = parser.parse_args()
