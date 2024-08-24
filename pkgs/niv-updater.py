@@ -107,7 +107,7 @@ def find_log_repo_command(long_url, urls_dict):
     best_match = None
     longest_match_length = 0
 
-    for name, key in urls_dict.items():
+    for _, key in urls_dict.items():
         if key["url"] in long_url:
             match_length = len(key["url"])
             if match_length > longest_match_length:
@@ -179,7 +179,9 @@ def main():
         if new_sources is None:
             sys.exit(1)
 
-        new_rev = new_sources[name]["rev"]
+        new_source = new_sources[name]
+
+        new_rev = new_source["rev"]
 
         if old_rev == new_rev:
             print(f"no changes for {name} detected")
@@ -187,17 +189,17 @@ def main():
 
         commit_message = f"niv: update {name}"
 
-        if new_sources[name]["url_template"] == "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz":
-            if not new_sources[name]["owner"] and not new_sources[name]["repo"]:
+        if new_source["url_template"] == "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz":
+            if not new_source["owner"] and not new_source["repo"]:
                 print(f"Error: owner and or repo not found for {name} in {file}")
 
-            commit_message += f'\n\nView changes: https://github.com/{new_sources[name]["owner"]}/{new_sources[name]["repo"]}/compare/{old_rev}...{new_rev}'
+            commit_message += f'\n\nView changes: https://github.com/{new_source["owner"]}/{new_source["repo"]}/compare/{old_rev}...{new_rev}'
 
         if args.no_changelog:
 
             log_cmd = f'log --oneline --no-decorate --no-merges "{old_rev}..{new_rev}"'
 
-            best_cmd_match = find_log_repo_command(new_sources[name]["url"], config["repo"])
+            best_cmd_match = find_log_repo_command(new_source["url"], config["repo"])
             if best_cmd_match:
                 # print("found repo match")
                 command = f"{best_cmd_match} {log_cmd}"
