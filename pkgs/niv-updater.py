@@ -120,9 +120,8 @@ def find_log_repo_command(long_url, urls_dict):
     return best_match
 
 
-def main():
-    file = "nix/sources.json"
 
+def arg_parser():
     parser = ArgumentParser(description="Update niv sources and commit changes with a changelog")
 
     parser.add_argument('PACKAGE', type=str, help='The repo to update, if none is provided it will update all', nargs='?')
@@ -134,8 +133,13 @@ def main():
                         help="provide a config file, default is ~/.config/niv-updater/config.toml",
                         metavar="CONFIG", default="~/.config/niv-updater/config.toml")
 
+    return parser.parse_args()
 
-    args = parser.parse_args()
+
+def main():
+    file = "nix/sources.json"
+
+    args = arg_parser()
 
     config = load_config(args.config)
 
@@ -162,7 +166,6 @@ def main():
             sys.exit(1)
         print(f"Updating {args.PACKAGE}")
         sources = {args.PACKAGE: sources[args.PACKAGE]}
-
 
     # process sources one by one
     for name in sources:
