@@ -58,6 +58,20 @@ def read_sources_json():
         return None
 
 
+def repo_fetch(repo_path=".", remote_name=""):
+    try:
+        repo = git.Repo(f"{repo_path}", search_parent_directories=True)
+        if remote_name:
+            repo.git.fetch(remote_name)
+        else:
+            repo.git.fetch()
+        print("Repo fetch completed successfully.")
+        return True
+    except Exception as e:
+        print(f"Error fetching repo: {e}")
+        return False
+
+
 def check_uncommitted_changes(file_path):
     try:
         repo = git.Repo(".", search_parent_directories=True)
@@ -106,19 +120,29 @@ def commit_file(file_path, message):
         print(f"Error committing file: {e}")
 
 
-def find_log_repo_command(long_url, urls_dict):
+def find_matching_repo_config(long_url, config_repo):
     best_match = None
     longest_match_length = 0
 
-    for _, key in urls_dict.items():
+    for _, key in config_repo.items():
         if key["url"] in long_url:
             match_length = len(key["url"])
             if match_length > longest_match_length:
                 longest_match_length = match_length
-                best_match = key["cmd"]
+                best_match = key
 
     return best_match
 
+
+def get_log(repo_path, old_rev, new_rev):
+    try:
+        repo = git.Repo(f"{repo_path}", search_parent_directories=True)
+
+        output = repo.git.log("--oneline", "--no-decorate", "--no-merges", f"{old_rev}..{new_rev}")
+        return output
+    except Exception as e:
+        print(f"Error getting log: {e}")
+        sys.exit(1)
 
 
 def arg_parser():
@@ -203,31 +227,38 @@ def main():
 
         if args.no_changelog:
 
-            log_cmd = f'log --oneline --no-decorate --no-merges "{old_rev}..{new_rev}"'
+            config_repo = find_matching_repo_config(new_source["url"], config["repo"])
 
-            best_cmd_match = find_log_repo_command(new_source["url"], config["repo"])
-            if best_cmd_match:
-                # print("found repo match")
-                command = f"{best_cmd_match} {log_cmd}"
-            else:
-                print("No match found")
+            if config_repo is None:
+                print(f"No config match found for {new_source['url']}")
                 sys.exit(1)
 
-            try:
-                log_result = subprocess.run(
-                    command, shell=True, check=True, text=True, capture_output=True
-                )
-                if log_result.stderr:
-                    print(log_result.stderr)
-            except subprocess.CalledProcessError as e:
-                print(f"Error running command: {e}")
+            repo_path = ""
+            if "path" in config_repo:
+                repo_path = config_repo["path"]
+
+            if repo_path == "":
+                print(f"No path found in config for {new_source['url']}")
                 sys.exit(1)
 
-            if log_result.returncode != 0:
-                print(f"Error running command: {log_result.stderr}")    
-                sys.exit(1)
+            fetch = True;
+            if "fetch" in config_repo:
+                fetch = config_repo["fetch"]
 
-            commit_message += f"\n\nChangelog:\n\n{log_result.stdout}"
+            if fetch is True:
+                print("Fetching repo")
+                if repo_fetch(repo_path) is False:
+                    print("Error fetching repo")
+                    sys.exit(1)
+            elif fetch is not False:
+                print(f"fetching repo from {fetch}")
+                if repo_fetch(repo_path, fetch) is False:
+                    print("Error fetching repo")
+                    sys.exit(1)
+
+            log_result = get_log(repo_path, old_rev, new_rev)
+
+            commit_message += f"\n\nChangelog:\n\n{log_result}"
 
         commit_file(file, commit_message)
 
