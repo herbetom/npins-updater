@@ -31,7 +31,7 @@ pkgs.mkShell {
 
 ```
 $ niv-updater --help
-usage: niv-updater [-h] [--no-changelog] [-c CONFIG] [PACKAGE]
+usage: niv-updater [-h] [--no-changelog] [-c CONFIG] [-S] [PACKAGE]
 
 Update niv sources and commit changes with a changelog
 
@@ -43,4 +43,5 @@ options:
   --no-changelog        do not create a changelog
   -c CONFIG, --config CONFIG
                         provide a config file, default is ~/.config/niv-updater/config.toml
+  -S, --sign            GPG-sign commits.
 ```

@@ -108,11 +108,15 @@ def get_first_line_with_ellipsis(message):
     return lines[0]
 
 
-def commit_file(file_path, message):
+def commit_file(file_path, message, sign=False):
     try:
         repo = git.Repo(".", search_parent_directories=True)
         repo.index.add([file_path])
-        repo.index.commit(message)
+        if sign:
+            repo.index.write()
+            repo.git.commit("-m", message, "-S")
+        else:
+            repo.index.commit(message)
         print(
             f'Committed {file_path} with message: "{get_first_line_with_ellipsis(message)}"'
         )
@@ -156,6 +160,8 @@ def arg_parser():
     parser.add_argument("-c", "--config", dest="config",
                         help="provide a config file, default is ~/.config/niv-updater/config.toml",
                         metavar="CONFIG", default="~/.config/niv-updater/config.toml")
+
+    parser.add_argument("-S", "--sign", action="store_true", help="GPG-sign commits.")
 
     return parser.parse_args()
 
@@ -260,7 +266,7 @@ def main():
 
             commit_message += f"\n\nChangelog:\n\n{log_result}"
 
-        commit_file(file, commit_message)
+        commit_file(file, commit_message, args.sign)
 
 
 if __name__ == "__main__":
