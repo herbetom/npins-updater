@@ -45,3 +45,28 @@ options:
                         provide a config file, default is ~/.config/niv-updater/config.toml
   -S, --sign            GPG-sign commits.
 ```
+
+## Config File
+
+
+```
+# github_token=string (optional): Useful if you run into an api limit with niv
+github_token="github_YOUR-PERSONAL-ACCESS-TOKEN"
+
+
+# Enty for the nixpkgs repo
+[repo.nixpkgs]
+# url=string - URL of the repo.
+url="https://github.com/NixOS/nixpkgs/"
+
+# path=string - path of the repo
+path="/home/user/git/NixOS/nixpkgs"
+
+# fetch=string|boolean (optional): true by default. If true it will fetch from the default remote. If false it won't fetch. If a string is provided if will try fetching from the that remote.
+fetch="upstream"
+
+[repo.niv-updater]
+url="https://github.com/herbetom/niv-updater/"
+path="/home/user/git/niv-updater"
+fetch=true
+```
