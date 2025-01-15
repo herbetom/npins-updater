@@ -46,7 +46,17 @@ def read_sources_json():
     try:
         with open("npins/sources.json", encoding="utf-8") as f:
             sources = json.load(f)
-        return sources
+
+            if sources["version"] is None or sources["version"] != 3:
+                print("unsupported npins sources version")
+                sys.exit(1)
+
+            if sources["pins"] is None:
+                print("no npins sources found")
+                sys.exit(1)
+
+        return sources["pins"]
+
     except FileNotFoundError:
         print("sources.json file not found.")
         return None
@@ -199,7 +209,7 @@ def main():
         source = sources[name]
         # print(f"proccessing {name}")
 
-        old_rev = source["rev"]
+        old_rev = source["revision"]
 
         run_npins_update(name)
 
@@ -210,7 +220,7 @@ def main():
 
         new_source = new_sources[name]
 
-        new_rev = new_source["rev"]
+        new_rev = new_source["revision"]
 
         if old_rev == new_rev:
             print(f"no changes for {name} detected")
@@ -218,11 +228,11 @@ def main():
 
         commit_message = f"npins: update {name}"
 
-        if new_source["url_template"] == "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz":
-            if not new_source["owner"] and not new_source["repo"]:
+        if source["repository"]["type"] == "GitHub":
+            if not new_source["repository"]["owner"] and not new_source["repository"]["repo"]:
                 print(f"Error: owner and or repo not found for {name} in {file}")
 
-            commit_message += f'\n\nView changes: https://github.com/{new_source["owner"]}/{new_source["repo"]}/compare/{old_rev}...{new_rev}'
+            commit_message += f'\n\nView changes: https://github.com/{new_source["repository"]["owner"]}/{new_source["repository"]["repo"]}/compare/{old_rev}...{new_rev}'
 
         if args.no_changelog:
 

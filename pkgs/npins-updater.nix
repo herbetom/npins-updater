@@ -3,7 +3,7 @@
 
 stdenv.mkDerivation {
   name = "npins-updater";
-  version = "0.0.1";
+  version = "0.0.2";
 
   src = ./npins-updater.py;
 

@@ -7,7 +7,7 @@
 1. add npins-updater to your sources:
 
 ```bash
-npins add herbetom/npins-updater
+npins add github herbetom npins-updater -b main
 ```
 
 2. edit `shell.nix` to add npins-updater to your development shell:
@@ -19,7 +19,7 @@ pkgs.mkShell {
   packages = with pkgs; [
     npins
     # This is the important line:
-    (pkgs.callPackage "${(import ./npins/sources.nix).npins-updater}/pkgs/npins-updater.nix" {})
+    (pkgs.callPackage "${(import ./npins).npins-updater}/pkgs/npins-updater.nix" {})
   ];
 }
 ```
@@ -50,10 +50,6 @@ options:
 
 
 ```
-# github_token=string (optional): Useful if you run into an api limit with npins
-github_token="github_YOUR-PERSONAL-ACCESS-TOKEN"
-
-
 # Enty for the nixpkgs repo
 [repo.nixpkgs]
 # url=string - URL of the repo.
