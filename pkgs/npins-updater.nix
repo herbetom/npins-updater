@@ -2,10 +2,10 @@
 { stdenv, fetchurl }:
 
 stdenv.mkDerivation {
-  name = "niv-updater";
+  name = "npins-updater";
   version = "0.0.1";
 
-  src = ./niv-updater.py;
+  src = ./npins-updater.py;
 
   dontUnpack = true;
 
@@ -13,10 +13,10 @@ stdenv.mkDerivation {
 
   installPhase = ''
     mkdir -p $out/bin
-    cp $src $out/bin/niv-updater
+    cp $src $out/bin/npins-updater
   '';
 
   meta = {
-    description = "niv-updater is a tool to update niv dependencies";
+    description = "npins-updater is a tool to update npins dependencies";
   };
 }

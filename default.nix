@@ -1,3 +1,3 @@
 {pkgs ? import <nixpkgs> {}}: {
-  niv-updater = pkgs.callPackage ./pkgs/niv-updater.nix {};
+  npins-updater = pkgs.callPackage ./pkgs/npins-updater.nix {};
 }

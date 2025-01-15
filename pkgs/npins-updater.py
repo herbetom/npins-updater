@@ -1,5 +1,5 @@
 #!/usr/bin/env nix-shell
-#!nix-shell -i python3 -p python3Packages.gitpython -p niv
+#!nix-shell -i python3 -p python3Packages.gitpython -p npins
 
 import sys
 import os
@@ -28,26 +28,23 @@ def load_config(file_path):
         return None
 
 
-def run_niv_update(name=None, github_token=None):
+def run_npins_update(name=None):
     try:
         env = os.environ.copy()
 
-        if github_token:
-            env["NIV_GITHUB_TOKEN"] = github_token
-
         if name:
-            subprocess.run(["niv", "update", name], check=True, env=env)
+            subprocess.run(["npins", "update", name], check=True, env=env)
         else:
-            subprocess.run(["niv", "update"], check=True, env=env)
+            subprocess.run(["npins", "update"], check=True, env=env)
 
-        print("niv update completed successfully.")
+        print("npins update completed successfully.")
     except subprocess.CalledProcessError as e:
-        print(f"niv update failed with error: {e}")
+        print(f"npins update failed with error: {e}")
 
 
 def read_sources_json():
     try:
-        with open("nix/sources.json", encoding="utf-8") as f:
+        with open("npins/sources.json", encoding="utf-8") as f:
             sources = json.load(f)
         return sources
     except FileNotFoundError:
@@ -150,7 +147,7 @@ def get_log(repo_path, old_rev, new_rev):
 
 
 def arg_parser():
-    parser = ArgumentParser(description="Update niv sources and commit changes with a changelog")
+    parser = ArgumentParser(description="Update npins sources and commit changes with a changelog")
 
     parser.add_argument('PACKAGE', type=str, help='The repo to update, if none is provided it will update all', nargs='?')
 
@@ -158,8 +155,8 @@ def arg_parser():
                         help="do not create a changelog")
 
     parser.add_argument("-c", "--config", dest="config",
-                        help="provide a config file, default is ~/.config/niv-updater/config.toml",
-                        metavar="CONFIG", default="~/.config/niv-updater/config.toml")
+                        help="provide a config file, default is ~/.config/npins-updater/config.toml",
+                        metavar="CONFIG", default="~/.config/npins-updater/config.toml")
 
     parser.add_argument("-S", "--sign", action="store_true", help="GPG-sign commits.")
 
@@ -167,7 +164,7 @@ def arg_parser():
 
 
 def main():
-    file = "nix/sources.json"
+    file = "npins/sources.json"
 
     args = arg_parser()
 
@@ -204,11 +201,7 @@ def main():
 
         old_rev = source["rev"]
 
-        github_token = None
-        if "github_token" in config:
-            github_token = config["github_token"]
-
-        run_niv_update(name, github_token=github_token)
+        run_npins_update(name)
 
         # read sources.json again
         new_sources = read_sources_json()
@@ -223,7 +216,7 @@ def main():
             print(f"no changes for {name} detected")
             continue
 
-        commit_message = f"niv: update {name}"
+        commit_message = f"npins: update {name}"
 
         if new_source["url_template"] == "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz":
             if not new_source["owner"] and not new_source["repo"]:
