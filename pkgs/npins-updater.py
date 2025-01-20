@@ -1,5 +1,5 @@
 #!/usr/bin/env nix-shell
-#!nix-shell -i python3 -p python3Packages.gitpython -p npins
+#!nix-shell -i python3 -p python3Packages.gitpython
 
 import sys
 import os
@@ -47,7 +47,7 @@ def read_sources_json():
         with open("npins/sources.json", encoding="utf-8") as f:
             sources = json.load(f)
 
-            if sources["version"] is None or sources["version"] != 3:
+            if sources["version"] is None or sources["version"] not in [3, 4]:
                 print("unsupported npins sources version")
                 sys.exit(1)
 
