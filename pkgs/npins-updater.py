@@ -211,6 +211,10 @@ def main():
 
         old_rev = source["revision"]
 
+        if (source["type"].lower() != "Git".lower()):
+            print(f"Error: {name} is not a Git source")
+            continue
+
         run_npins_update(name)
 
         # read sources.json again
@@ -236,7 +240,9 @@ def main():
 
         if args.no_changelog:
 
-            config_repo = find_matching_repo_config(new_source["url"], config["repo"])
+            repo_url = new_source["url"] if new_source["url"] is not None else new_source["repository"]["url"];
+
+            config_repo = find_matching_repo_config(repo_url, config["repo"])
 
             if config_repo is None:
                 print(f"No config match found for {new_source['url']}")
