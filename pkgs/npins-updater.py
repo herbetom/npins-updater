@@ -47,7 +47,7 @@ def read_sources_json():
         with open("npins/sources.json", encoding="utf-8") as f:
             sources = json.load(f)
 
-            if sources["version"] is None or sources["version"] not in [3, 4]:
+            if sources["version"] is None or sources["version"] not in [3, 4, 5]:
                 print("unsupported npins sources version")
                 sys.exit(1)
 
